@@ -1,18 +1,19 @@
 # download_and_format_database.sh
 # C: Oct 23, 2015
-# M: Dec  9, 2016
+# M: Dec 23, 2016
 # A: Leandro Lima <lelimaufc@gmail.com>
 
 
-if [ "$#" -ne 1 ]; then
+if [ "$#" -ne 3 ]; then
     echo -e "\n\n\tYou have to pass a genome version as a parameter."
     echo -e "\tUsage: ./download_and_format_database.sh [genome_version] [split_chromosomes] [download_fasta]"
-    echo -e "\n\tGenome versions accepted: hg19 and hg38\n\n"
+    echo -e "\n\tGenome versions accepted: hg19 and hg38"
     echo -e "\n\tSet split_chromosomes=1 if you want to split the files in individual chromosomes."
-    echo -e "\n\tIt will take more time now, but it will save time to run the analysis in parallel."
-    echo -e "\n\tChoose split_chromosomes=0 if you do NOT wish to split the files by chromosomes."
-    echo -e "\n\t[download_fasta] also receives 0 and 1. Set 0 for NO and 1 for YES."
+    echo -e "\tIt will take more time now, but it will save time to run the analysis in parallel."
+    echo -e "\tChoose split_chromosomes=0 if you do NOT wish to split the files by chromosomes."
+    echo -e "\t[download_fasta] also receives 0 and 1. Set 0 for NO and 1 for YES."
     echo -e "\n\n\tExample: ./download_and_format_database.sh hg19 1 0"
+    echo -e "\n\n"
     exit 1
 fi
 
@@ -45,6 +46,9 @@ if [ "$2" -eq 1 ]; then
         for chrom in {1..22} X Y; do
             echo -n $chrom" "
             grep -w ^$chrom $gv""_$pop.sites.2015_08.txt > $gv""_$pop.sites.2015_08.chrom$chrom.txt
+            echo -e "Name\tChr\tPosition\tPFB" > $gv""_$pop.sites.2015_08.pfb
+            awk 'length($3)==1 && length($4)==1 {name="chr"$1":"$2"-"$2; print name"\t"$1"\t"$2"\t"$5}' $gv""_$pop.sites.2015_08.chrom$chrom.txt >> $gv""_$pop.sites.2015_08.pfb
+            awk 'length($3)==1 && length($4)==1 {print "chr"$1"\t"$2"\t"$2}' $gv""_$pop.sites.2015_08.chrom$chrom.txt > $gv""_$pop.sites.2015_08.chrom$chrom.bed
         done
         echo -e "\nDone.\n"
     done
@@ -71,19 +75,19 @@ fi
 
 # Uncomment the lines below in case you want to create bwa indexes
 
-# cd $gv
-# 
-# qsub 2> qsub_test.txt
-# qsub_test=`grep -c 'not found' qsub_test.txt`
-# 
-# if [ "$qsub_test" eq "1" ]; then
-#     for chrom in {1..22} X Y; do
-#         echo "bwa index chr$chrom.fa" | qsub -cwd -V -N chr$chrom""_index
-#     done
-# else
-#     for chrom in {1..22} X Y; do
-#         echo "bwa index chr$chrom.fa" | sh
-#     done
-# fi
-# 
-# cd ..
+cd $gv
+
+qsub --version 2> qsub_test.txt
+qsub_test=`grep -c 'found' qsub_test.txt` # we're actually testing if qsub was not found.
+
+if [ "$qsub_test" -eq "1" ]; then
+    for chrom in {1..22} X Y; do
+        echo "bwa index chr$chrom.fa" | qsub -cwd -V -N chr$chrom""_index
+    done
+else
+    for chrom in {1..22} X Y; do
+        echo "bwa index chr$chrom.fa" | sh
+    done
+fi
+
+cd ../..
