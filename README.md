@@ -25,4 +25,8 @@ Adaptation of the original PennCNV algorithm for whole-genome sequencing data.
 	cd PennCNV-Seq
 	./penncnv-seq_example.sh [penncnv_dir] [penncnv_ref_dir] [genome_version] [population] [reference.fasta] [bam_file]
 	
+
+### Visualize PennCNV results in genome browsers
+
+	python penncnv2bed.py results.rawcnv > results.bed
 	
