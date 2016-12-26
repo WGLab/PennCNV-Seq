@@ -8,11 +8,14 @@
 
 if [ "$#" -ne 5 ]; then
     echo -e "** Illegal number of parameters.**\n"
-    echo -e "./penncnv-seq_example.sh [penncnv_dir] [penncnv_ref_dir] [genome_version] [population] [reference.fasta] [bam_file]\n"
+    echo -e "Usage:"
+    echo -e "\t./penncnv-seq_example.sh [penncnv_dir] [penncnv_ref_dir] [genome_version] [population] [reference.fasta] [bam_file]\n"
     echo -e "Accepted populations: ALL, AFR, AMR, EAS, EUR and SAS"
     echo -e "Accepted genome versions: hg19 and hg38"
+    echo
     echo -e "Example:"
     echo -e "./penncnv-seq_example.sh ~/PennCNV ~/reference hg19 AFR chr21.fasta chr21.bam"
+    echo 
     exit 1
 fi
 
