@@ -3,9 +3,11 @@ Adaptation of the original PennCNV algorithm for whole-genome sequencing data.
 
 ## PennCNV-Seq installation
 
-### Install PennCNV
+### Install PennCNV (at least version v1.0.4)
 
-   Instructions at [http://penncnv.openbioinformatics.org/en/latest/user-guide/install/](http://penncnv.openbioinformatics.org/en/latest/user-guide/install/)
+   Releases can be found [here](https://github.com/WGLab/PennCNV/releases).
+   Installation instructions at [http://penncnv.openbioinformatics.org/en/latest/user-guide/install/](http://penncnv.openbioinformatics.org/en/latest/user-guide/install/)
+   
 
 ### Install BEDtools
 
