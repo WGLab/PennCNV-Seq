@@ -56,10 +56,10 @@ sub readVariantInfo {
 	my $command;
 	
 	if ($region) {
-		-f "$bamfile.bai" or die "Error: for -r argument, the BAM file must be indexed first\n";
-		$command = "samtools mpileup -u -f $reffile -r $region $bamfile  | bcftools call -c - |";
+		(-f "$bamfile.bai" ||-f "$bamfile.crai") or die "Error: for -r argument, the BAM/CRAM file must be indexed first\n";
+		$command = "bcftools mpileup -Ou -f $reffile -r $region $bamfile  | bcftools call -c - |";
 	} else {
-		$command = "samtools mpileup -uf $reffile $bamfile $region | bcftools call -c - |";
+		$command = "bcftools mpileup -Ou -f $reffile $bamfile $region | bcftools call -c - |";
 	}
 	#$command = 'temp.vcf';				#for debugging purposes
 	
@@ -68,7 +68,7 @@ sub readVariantInfo {
 	my ($countsite, $countcov, $countsnp, $sumcov) = (0, 0, 0, 0);		#count of sites examined, sum of coverage for all bases in a region
 	my ($prechr, $prepos, $precov) = (-1);
 	
-	print STDERR "NOTICE: Starting variant calling and processing variant information from BAM file (input=$bamfile output=$readoutfile)\n";
+	print STDERR "NOTICE: Starting variant calling and processing variant information from BAM/CRAM file (input=$bamfile output=$readoutfile)\n";
 	open (VAR, $command) or die "Error: cannot read from command output: <$command>\n";
 	open (OUT, ">$readoutfile") or die "Error: cannot write to output file $readoutfile: $!\n";
 	print OUT "Name\tCoverage\tBAC\tBAF\tLength\n";
@@ -348,7 +348,7 @@ sub addPairedDistance {
 	print STDERR "NOTICE: Start adding paired end distance information to the read file (input=$readinfile output=$readoutfile)\n";
 	open (IN, $readinfile) or die "Error: cannot read from inputfile $readinfile: $!\n";
 	open (OUT, ">$readoutfile") or die "Error: cannot write to outputfile $readoutfile: $!\n";
-	open (SAM, "samtools view $bamfile |") or die "Error: cannot read from SAM input\n";
+	open (SAM, "bcftools view $bamfile |") or die "Error: cannot read from SAM input\n";
 	$_ = <IN>;
 	chomp;
 	m/^Name\tCoverage/ or die "Error: invalid header line in inputfile $readinfile: <$_>\n";
@@ -493,7 +493,7 @@ sub convertRead2Signal {
 
 =head1 SYNOPSIS
 
- convert_map2signal.pl [arguments] <BAMfile> <FASTAfile>
+ convert_map2signal.pl [arguments] <BAM/CRAMfile> <FASTAfile>
 
  Optional arguments:
  	-v, --verbose			use verbose output
