@@ -1,6 +1,6 @@
 # download_and_format_database.sh
 # C: Oct 23, 2015
-# M: Dec 23, 2016
+# M: Aug 10, 2020
 # A: Leandro Lima <lelimaufc@gmail.com>
 
 
@@ -43,10 +43,10 @@ if [ "$2" -eq 1 ]; then
     for pop in AFR ALL AMR EAS EUR SAS; do
         echo "Filtering variants for" $pop "population."
         echo -n "Chromosomes: "
+        echo -e "Name\tChr\tPosition\tPFB" > $gv""_$pop.sites.2015_08.pfb
         for chrom in {1..22} X Y; do
             echo -n $chrom" "
             grep -w ^$chrom $gv""_$pop.sites.2015_08.txt > $gv""_$pop.sites.2015_08.chrom$chrom.txt
-            echo -e "Name\tChr\tPosition\tPFB" > $gv""_$pop.sites.2015_08.pfb
             awk 'length($3)==1 && length($4)==1 {name="chr"$1":"$2"-"$2; print name"\t"$1"\t"$2"\t"$5}' $gv""_$pop.sites.2015_08.chrom$chrom.txt >> $gv""_$pop.sites.2015_08.pfb
             awk 'length($3)==1 && length($4)==1 {print "chr"$1"\t"$2"\t"$2}' $gv""_$pop.sites.2015_08.chrom$chrom.txt > $gv""_$pop.sites.2015_08.chrom$chrom.bed
         done
